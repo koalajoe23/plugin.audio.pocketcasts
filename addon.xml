@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.audio.pocketcasts" name="PocketCasts" version="0.0.1" provider-name="sirl1on">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0" />
+    <import addon="script.module.requests" version="2.14.0" />
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="addon.py">
+    <provides>audio</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en_GB">Listen to your podcasts managed by PocketCasts.com</summary>
+    <description lang="en_gb">TODO: Long description</description>
+    <disclaimer lang="en_gb">This is NO official add-on and is neither created, supported nor endorsed by ShiftyJelly.</disclaimer>
+    <language>en</language>
+    <platform>all</platform>
+    <license>MIT</license>
+    <forum></forum>
+    <website></website>
+    <email></email>
+    <source></source>
+  </extension>
+</addon>
