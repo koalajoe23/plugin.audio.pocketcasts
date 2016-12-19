@@ -1,17 +1,19 @@
-import routing
-from xbmcgui import ListItem
-from xbmcplugin import addDirectoryItem, endOfDirectory
+# -*- coding: utf-8 -*-
+from kodiswift import Plugin
 
-plugin = routing.Plugin()
+
+plugin = Plugin()
+
 
 @plugin.route('/')
 def index():
-    addDirectoryItem(plugin.handle, plugin.url_for(all), ListItem("My Podcasts"), True)
-    endOfDirectory(plugin.handle)
+    item = {
+        'label': 'Hello Kodi!',
+        'path': 'http://example.com/video.mp4',
+        'is_playable': True
+    }
+    return [item]
 
-@plugin.route('/all')
-def all():
-    endOfDirectory(plugin.handle)
 
 if __name__ == '__main__':
     plugin.run()
