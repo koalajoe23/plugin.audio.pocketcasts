@@ -1,5 +1,5 @@
-<addon id="plugin.audio.pocketcasts" name="Pocket Casts" version="0.0.1" provider-name="sirl1on">
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.audio.pocketcasts" name="Pocket Casts" version="0.0.1" provider-name="sirl1on">
   <requires>
     <import addon="xbmc.python" version="2.24.0" />
     <import addon="script.module.requests" version="2.9.1" />
