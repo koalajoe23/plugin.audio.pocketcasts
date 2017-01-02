@@ -83,9 +83,13 @@ def index():
     ]
 
     xbmcplugin.setContent(_plugin.handle, 'files')
-    list_items = [
-        (item['url'], xbmcgui.ListItem(item['label']), True) for item in items
-        ]
+    list_items = []
+    for item in items:
+        list_item = xbmcgui.ListItem(item['label'])
+        list_item.setArt({
+            'fanart': _default_fanart
+        })
+        list_items.append((item['url'], list_item, True))
     if not xbmcplugin.addDirectoryItems(_plugin.handle, list_items):
         raise
     xbmcplugin.endOfDirectory(_plugin.handle)
