@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
+import requests
 import routing
 import sys
+import xbmc
 import xbmcaddon
 import xbmcgui
 import xbmcplugin
@@ -100,7 +102,22 @@ def index():
 
 @_plugin.route('/my_podcasts/')
 def my_podcasts():
-    items = podcasts2items(_api.my_podcasts())
+    try:
+        items = podcasts2items(_api.my_podcasts())
+    except requests.exceptions.HTTPError as e:
+        if e.response.status_code == requests.codes.unauthorized:
+            xbmcgui.Dialog().ok("Error", "Could not authenticate with "
+                                "Pocket Casts.", "Check login credentials!")
+            xbmc.log(_addon.getAddonInfo('id'))
+            _addon.openSettings()
+        else:
+            xbmcgui.Dialog().notification('Error occurred', str(e),
+                                          xbmcgui.NOTIFICATION_ERROR)
+        return
+    except requests.exceptions.RequestException as e:
+        xbmcgui.Dialog().notification('Error occurred', str(e),
+                                      xbmcgui.NOTIFICATION_ERROR)
+        return
     xbmcplugin.setContent(_plugin.handle, 'albums')
     if not xbmcplugin.addDirectoryItems(_plugin.handle, items):
         raise
