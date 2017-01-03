@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <category label="Pocket Casts credentials">
+        <setting label="email" type="text" id="pocketcasts_email" />
+        <setting label="password" type="text" id="pocketcasts_password" option="hidden"/>
+    </category>
+</settings>

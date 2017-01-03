@@ -2,6 +2,7 @@
 import os
 import routing
 import sys
+import xbmcaddon
 import xbmcgui
 import xbmcplugin
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'resources',
@@ -9,7 +10,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'resources',
 from pocketcasts import Api
 
 _plugin = routing.Plugin()
-_api = Api('tobias.jost@spinweb.de', 'd$QdU!jzG79PSc5c')
+_addon = xbmcaddon.Addon()
+_api = Api(_addon.getSetting('pocketcasts_email'),
+           _addon.getSetting('pocketcasts_password'))
 _default_fanart = os.path.join(os.path.dirname(__file__), 'fanart.jpg')
 
 
