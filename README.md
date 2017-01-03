@@ -12,7 +12,6 @@ Status: WIP
 * Playing episodes from start
 
 # Work in progress...
-* Podcast Metadata integration
 * Translation
 * Documentation
 * Starring/unstarring podcasts

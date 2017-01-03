@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 import os
 import requests
 import routing
@@ -9,12 +10,12 @@ import xbmcgui
 import xbmcplugin
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'resources',
                 'lib', 'python-pocketcasts'))
-from pocketcasts import Api
+import pocketcasts
 
 _plugin = routing.Plugin()
 _addon = xbmcaddon.Addon()
-_api = Api(_addon.getSetting('pocketcasts_email'),
-           _addon.getSetting('pocketcasts_password'))
+_api = pocketcasts.Api(_addon.getSetting('pocketcasts_email'),
+                       _addon.getSetting('pocketcasts_password'))
 _default_fanart = os.path.join(os.path.dirname(__file__), 'fanart.jpg')
 
 
@@ -55,7 +56,25 @@ def episodes2items(episodes):
     list_items = []
     for i, episode in enumerate(episodes):
         podcast = episode.podcast
-        list_item = xbmcgui.ListItem(episode.title)
+        label = episode.title
+        italics = False
+        yellow = False
+        if episode.starred:
+            label = '[S]' + label
+            yellow = True
+        if episode.played_up_to > 0 and \
+                episode.playing_status == \
+                pocketcasts.Episode.PlayingStatus.Unplayed:
+            m, s = divmod(episode.played_up_to, 60)
+            h, m = divmod(m, 60)
+            elapsed = '{0:01d}:{1:02d}:{2:02d}'.format(h, m, s)
+            label = '[' + elapsed + '] ' + label
+            italics = True
+        if yellow:
+            label = '[COLOR yellow]' + label + '[/COLOR]'
+        if italics:
+            label = '[I]' + label + '[/I]'
+        list_item = xbmcgui.ListItem(label)
         list_item.setArt({
             'icon': podcast.thumbnail_url,
             'thumb': podcast.thumbnail_url,
