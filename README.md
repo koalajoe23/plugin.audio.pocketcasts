@@ -13,11 +13,11 @@ Status: WIP
 
 # Work in progress...
 * Podcast Metadata integration
-* Podcast search
 * Translation
 * Documentation
 * Starring/unstarring podcasts
 * Resuming podcasts
+* Subscribing/unsubscribing podcasts
 
 # Not working
 * Everything not available in Pocket Casts web interface (and thus pyhon-pocketcasts module)
