@@ -112,7 +112,7 @@ def index():
     xbmcplugin.endOfDirectory(_plugin.handle)
 
 
-@_plugin.route('/my_podcasts/')
+@_plugin.route('/my_podcasts')
 def my_podcasts():
     try:
         items = podcasts2items(_api.my_podcasts())
@@ -125,68 +125,111 @@ def my_podcasts():
     xbmcplugin.endOfDirectory(_plugin.handle, cacheToDisc=False)
 
 
-@_plugin.route('/new_episode_released/')
+@_plugin.route('/new_episode_released')
 def new_episode_released():
-    items = episodes2items(_api.new_episodes_released())
+    try:
+        items = episodes2items(_api.new_episodes_released())
+    except requests.exceptions.RequestException as e:
+        handleException(e)
+        return
     xbmcplugin.setContent(_plugin.handle, 'songs')
     if not xbmcplugin.addDirectoryItems(_plugin.handle, items):
         raise
     xbmcplugin.endOfDirectory(_plugin.handle, cacheToDisc=False)
 
 
-@_plugin.route('/episodes_in_progress/')
+@_plugin.route('/episodes_in_progress')
 def episodes_in_progress():
-    items = episodes2items(_api.episodes_in_progress())
+    try:
+        items = episodes2items(_api.episodes_in_progress())
+    except requests.exceptions.RequestException as e:
+        handleException(e)
+        return
     xbmcplugin.setContent(_plugin.handle, 'songs')
     if not xbmcplugin.addDirectoryItems(_plugin.handle, items):
         raise
     xbmcplugin.endOfDirectory(_plugin.handle, cacheToDisc=False)
 
 
-@_plugin.route('/starred_episodes/')
+@_plugin.route('/starred_episodes')
 def starred_episodes():
-    items = episodes2items(_api.starred_episodes())
+    try:
+        items = episodes2items(_api.starred_episodes())
+    except requests.exceptions.RequestException as e:
+        handleException(e)
+        return
     xbmcplugin.setContent(_plugin.handle, 'songs')
     if not xbmcplugin.addDirectoryItems(_plugin.handle, items):
         raise
     xbmcplugin.endOfDirectory(_plugin.handle, cacheToDisc=False)
 
 
-@_plugin.route('/featured_podcasts/')
+@_plugin.route('/featured_podcasts')
 def featured_podcasts():
-    items = podcasts2items(_api.featured_podcasts())
+    try:
+        items = podcasts2items(_api.featured_podcasts())
+    except requests.exceptions.RequestException as e:
+        handleException(e)
+        return
     xbmcplugin.setContent(_plugin.handle, 'albums')
     if not xbmcplugin.addDirectoryItems(_plugin.handle, items):
         raise
     xbmcplugin.endOfDirectory(_plugin.handle, cacheToDisc=False)
 
 
-@_plugin.route('/popular_podcasts/')
+@_plugin.route('/popular_podcasts')
 def popular_podcasts():
-    items = podcasts2items(_api.popular_podcasts())
+    try:
+        items = podcasts2items(_api.popular_podcasts())
+    except requests.exceptions.RequestException as e:
+        handleException(e)
+        return
     xbmcplugin.setContent(_plugin.handle, 'albums')
     if not xbmcplugin.addDirectoryItems(_plugin.handle, items):
         raise
     xbmcplugin.endOfDirectory(_plugin.handle, cacheToDisc=False)
 
 
-@_plugin.route('/trending_podcasts/')
+@_plugin.route('/trending_podcasts')
 def trending_podcasts():
-    items = podcasts2items(_api.trending_podcasts())
+    try:
+        items = podcasts2items(_api.trending_podcasts())
+    except requests.exceptions.RequestException as e:
+        handleException(e)
+        return
     xbmcplugin.setContent(_plugin.handle, 'albums')
     if not xbmcplugin.addDirectoryItems(_plugin.handle, items):
         raise
     xbmcplugin.endOfDirectory(_plugin.handle, cacheToDisc=False)
 
 
-@_plugin.route('/search_podcast/')
+@_plugin.route('/search_podcast')
 def search_podcast():
-    return []  # podcasts2items(_api.popular_podcasts())
+    term = xbmcgui.Dialog().input("Enter search term")
+    if term:
+        _plugin.redirect('/search_podcast/'+term)
 
 
-@_plugin.route('/podcast/<uuid>/')
+@_plugin.route('/search_podcast/<term>')
+def search_podcast_results(term):
+    try:
+        items = podcasts2items(_api.search_podcasts(term))
+    except requests.exceptions.RequestException as e:
+        handleException(e)
+        return
+    xbmcplugin.setContent(_plugin.handle, 'albums')
+    if not xbmcplugin.addDirectoryItems(_plugin.handle, items):
+        raise
+    xbmcplugin.endOfDirectory(_plugin.handle, cacheToDisc=False)
+
+
+@_plugin.route('/podcast/<uuid>')
 def show_episodes(uuid):
-    podcast = _api.podcast(uuid)
+    try:
+        podcast = _api.podcast(uuid)
+    except requests.exceptions.RequestException as e:
+        handleException(e)
+        return
     items = episodes2items(podcast.episodes)
     xbmcplugin.setContent(_plugin.handle, 'songs')
     if not xbmcplugin.addDirectoryItems(_plugin.handle, items):
