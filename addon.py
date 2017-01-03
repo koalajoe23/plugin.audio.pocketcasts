@@ -39,6 +39,12 @@ def podcasts2items(podcasts):
             'thumb': podcast.thumbnail_url,
             'fanart': _default_fanart
         })
+        list_item.setInfo('music', {
+            'album': podcast.title,
+            'artist': podcast.author,
+            'comment': podcast.description,
+            'genre': 'Podcast'
+        })
         url = _plugin.url_for(show_episodes, uuid=podcast.uuid)
         list_items.append((url, list_item, True))
 
@@ -47,13 +53,24 @@ def podcasts2items(podcasts):
 
 def episodes2items(episodes):
     list_items = []
-    for episode in episodes:
+    for i, episode in enumerate(episodes):
         podcast = episode.podcast
         list_item = xbmcgui.ListItem(episode.title)
         list_item.setArt({
             'icon': podcast.thumbnail_url,
             'thumb': podcast.thumbnail_url,
             'fanart': _default_fanart
+        })
+        list_item.setInfo('music', {
+            'date': episode.published_at.strftime('%d.%m.%Y'),
+            'year': episode.published_at.year,
+            'album': episode.podcast.title,
+            'artist': episode.podcast.author,
+            'title': episode.title,
+            'tracknumber': len(episodes) - i,
+            'comment': episode.notes,
+            'duration': episode.duration,
+            'genre': 'Podcast'
         })
         list_item.setProperty('IsPlayable', 'true')
         url = episode.url

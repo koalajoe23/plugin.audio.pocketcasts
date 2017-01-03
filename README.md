@@ -21,3 +21,4 @@ Status: WIP
 
 # Not working
 * Everything not available in Pocket Casts web interface (and thus pyhon-pocketcasts module)
+* Podcast notes are displayed as comments with ugly HTML formatting, maybe look into html2text python module
