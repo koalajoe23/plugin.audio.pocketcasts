@@ -18,6 +18,18 @@ _api = Api(_addon.getSetting('pocketcasts_email'),
 _default_fanart = os.path.join(os.path.dirname(__file__), 'fanart.jpg')
 
 
+def handleException(e):
+    if type(e) == requests.exceptions.HTTPError and \
+            e.response.status_code == requests.codes.unauthorized:
+        xbmcgui.Dialog().ok("Error", "Could not authenticate with "
+                            "Pocket Casts.", "Check login credentials!")
+        xbmc.log(_addon.getAddonInfo('id'))
+        _addon.openSettings()
+    else:
+        xbmcgui.Dialog().notification('Error occurred', str(e),
+                                      xbmcgui.NOTIFICATION_ERROR)
+
+
 def podcasts2items(podcasts):
     list_items = []
     for podcast in podcasts:
@@ -104,19 +116,8 @@ def index():
 def my_podcasts():
     try:
         items = podcasts2items(_api.my_podcasts())
-    except requests.exceptions.HTTPError as e:
-        if e.response.status_code == requests.codes.unauthorized:
-            xbmcgui.Dialog().ok("Error", "Could not authenticate with "
-                                "Pocket Casts.", "Check login credentials!")
-            xbmc.log(_addon.getAddonInfo('id'))
-            _addon.openSettings()
-        else:
-            xbmcgui.Dialog().notification('Error occurred', str(e),
-                                          xbmcgui.NOTIFICATION_ERROR)
-        return
     except requests.exceptions.RequestException as e:
-        xbmcgui.Dialog().notification('Error occurred', str(e),
-                                      xbmcgui.NOTIFICATION_ERROR)
+        handleException(e)
         return
     xbmcplugin.setContent(_plugin.handle, 'albums')
     if not xbmcplugin.addDirectoryItems(_plugin.handle, items):
