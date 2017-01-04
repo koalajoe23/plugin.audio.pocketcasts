@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import datetime
 import os
 import requests
 import routing
@@ -59,9 +58,22 @@ def episodes2items(episodes):
         label = episode.title
         italics = False
         yellow = False
+        menu_items = []
+        podcast = episode.podcast
         if episode.starred:
             label = '[S]' + label
             yellow = True
+            menu_items.append(('Unstar', 'XBMC.RunPlugin(' +
+                               _plugin.url_for(unstar_episode,
+                                               podcast_uuid=podcast.uuid,
+                                               episode_uuid=episode.uuid,
+                                               ) + ')'))
+        else:
+            menu_items.append(('Star', 'XBMC.RunPlugin(' +
+                               _plugin.url_for(star_episode,
+                                               podcast_uuid=podcast.uuid,
+                                               episode_uuid=episode.uuid,
+                                               ) + ')'))
         if episode.played_up_to > 0 and \
                 episode.playing_status == \
                 pocketcasts.Episode.PlayingStatus.Unplayed:
@@ -92,10 +104,31 @@ def episodes2items(episodes):
             'genre': 'Podcast'
         })
         list_item.setProperty('IsPlayable', 'true')
+        list_item.addContextMenuItems(menu_items)
         url = episode.url
         list_items.append((url, list_item, False))
 
     return list_items
+
+
+@_plugin.route('/star_episode/<podcast_uuid>/<episode_uuid>')
+def star_episode(podcast_uuid, episode_uuid):
+    try:
+        _api.mark_as_starred(podcast_uuid, episode_uuid, True)
+    except requests.exceptions.RequestException as e:
+        handleException(e)
+        return
+    xbmc.executebuiltin('Container.Refresh')
+
+
+@_plugin.route('/unstar_episode/<podcast_uuid>/<episode_uuid>')
+def unstar_episode(podcast_uuid, episode_uuid):
+    try:
+        _api.mark_as_starred(podcast_uuid, episode_uuid, False)
+    except requests.exceptions.RequestException as e:
+        handleException(e)
+        return
+    xbmc.executebuiltin('Container.Refresh')
 
 
 @_plugin.route('/')

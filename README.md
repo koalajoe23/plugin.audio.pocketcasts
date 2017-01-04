@@ -21,3 +21,5 @@ Status: WIP
 # Not working
 * Everything not available in Pocket Casts web interface (and thus pyhon-pocketcasts module)
 * Podcast notes are displayed as comments with ugly HTML formatting, maybe look into html2text python module
+* Api authentication is done every addon directory listing. Can it be persisted?
+* If the api would provide a method to get an episode by uuid, that would be great
