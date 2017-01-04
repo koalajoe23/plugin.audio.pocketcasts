@@ -30,7 +30,15 @@ def handleException(e):
                                       xbmcgui.NOTIFICATION_ERROR)
 
 
-def podcasts2items(podcasts):
+def podcasts2items(podcasts, subscribed_podcast_uuids=None):
+    if not subscribed_podcast_uuids:
+        try:
+            subscribed_podcasts = _api.my_podcasts()
+        except requests.exceptions.RequestException as e:
+            handleException(e)
+            return
+        subscribed_podcast_uuids = \
+            [podcast.uuid for podcast in subscribed_podcasts]
     list_items = []
     for podcast in podcasts:
         list_item = xbmcgui.ListItem(podcast.title)
@@ -51,7 +59,15 @@ def podcasts2items(podcasts):
     return list_items
 
 
-def episodes2items(episodes):
+def episodes2items(episodes, subscribed_podcast_uuids=None):
+    if not subscribed_podcast_uuids:
+        try:
+            subscribed_podcasts = _api.my_podcasts()
+        except requests.exceptions.RequestException as e:
+            handleException(e)
+            return
+        subscribed_podcast_uuids = \
+            [podcast.uuid for podcast in subscribed_podcasts]
     list_items = []
     for i, episode in enumerate(episodes):
         podcast = episode.podcast
@@ -60,7 +76,8 @@ def episodes2items(episodes):
         yellow = False
         menu_items = []
         podcast = episode.podcast
-        if episode.starred:
+        if episode.starred and \
+                episode.podcast.uuid in subscribed_podcast_uuids:
             label = '[S]' + label
             yellow = True
             menu_items.append(('Unstar', 'XBMC.RunPlugin(' +
@@ -68,7 +85,7 @@ def episodes2items(episodes):
                                                podcast_uuid=podcast.uuid,
                                                episode_uuid=episode.uuid,
                                                ) + ')'))
-        else:
+        elif episode.podcast.uuid in subscribed_podcast_uuids:
             menu_items.append(('Star', 'XBMC.RunPlugin(' +
                                _plugin.url_for(star_episode,
                                                podcast_uuid=podcast.uuid,
@@ -184,7 +201,9 @@ def index():
 @_plugin.route('/my_podcasts')
 def my_podcasts():
     try:
-        items = podcasts2items(_api.my_podcasts())
+        podcasts = _api.my_podcasts()
+        uuids = [podcast.uuid for podcast in podcasts]
+        items = podcasts2items(podcasts, subscribed_podcast_uuids=uuids)
     except requests.exceptions.RequestException as e:
         handleException(e)
         return
