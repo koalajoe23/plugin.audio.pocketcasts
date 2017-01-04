@@ -41,7 +41,20 @@ def podcasts2items(podcasts, subscribed_podcast_uuids=None):
             [podcast.uuid for podcast in subscribed_podcasts]
     list_items = []
     for podcast in podcasts:
+        menu_items = []
+        podcast_subscribed = (podcast.uuid in subscribed_podcast_uuids)
         list_item = xbmcgui.ListItem(podcast.title)
+        if podcast_subscribed:
+            menu_items.append(('Unsubscribe', 'XBMC.RunPlugin(' +
+                               _plugin.url_for(unsubscribe_podcast,
+                                               podcast_uuid=podcast.uuid
+                                               ) + ')'))
+        else:
+            menu_items.append(('Subscribe', 'XBMC.RunPlugin(' +
+                               _plugin.url_for(subscribe_podcast,
+                                               podcast_uuid=podcast.uuid,
+                                               ) + ')'))
+        list_item.addContextMenuItems(menu_items)
         list_item.setArt({
             'icon': podcast.thumbnail_url,
             'thumb': podcast.thumbnail_url,
@@ -76,8 +89,8 @@ def episodes2items(episodes, subscribed_podcast_uuids=None):
         yellow = False
         menu_items = []
         podcast = episode.podcast
-        if episode.starred and \
-                episode.podcast.uuid in subscribed_podcast_uuids:
+        podcast_subscribed = (episode.podcast.uuid in subscribed_podcast_uuids)
+        if episode.starred and podcast_subscribed:
             label = '[S]' + label
             yellow = True
             menu_items.append(('Unstar', 'XBMC.RunPlugin(' +
@@ -85,7 +98,7 @@ def episodes2items(episodes, subscribed_podcast_uuids=None):
                                                podcast_uuid=podcast.uuid,
                                                episode_uuid=episode.uuid,
                                                ) + ')'))
-        elif episode.podcast.uuid in subscribed_podcast_uuids:
+        elif podcast_subscribed:
             menu_items.append(('Star', 'XBMC.RunPlugin(' +
                                _plugin.url_for(star_episode,
                                                podcast_uuid=podcast.uuid,
@@ -142,6 +155,26 @@ def star_episode(podcast_uuid, episode_uuid):
 def unstar_episode(podcast_uuid, episode_uuid):
     try:
         _api.mark_as_starred(podcast_uuid, episode_uuid, False)
+    except requests.exceptions.RequestException as e:
+        handleException(e)
+        return
+    xbmc.executebuiltin('Container.Refresh')
+
+
+@_plugin.route('/subscribe_podcast/<podcast_uuid>')
+def subscribe_podcast(podcast_uuid):
+    try:
+        _api.subscribe_podcast(podcast_uuid)
+    except requests.exceptions.RequestException as e:
+        handleException(e)
+        return
+    xbmc.executebuiltin('Container.Refresh')
+
+
+@_plugin.route('/unsubscribe_podcast/<podcast_uuid>')
+def unsubscribe_podcast(podcast_uuid):
+    try:
+        _api.unsubscribe_podcast(podcast_uuid)
     except requests.exceptions.RequestException as e:
         handleException(e)
         return
