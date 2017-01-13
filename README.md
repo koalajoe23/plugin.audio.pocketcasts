@@ -10,14 +10,13 @@ Status: WIP
 * Listing popular, trending and featured picks
 * Listing episode list
 * Playing episodes from start
-* Starring/Unstarring podcasts
+* Starring/Unstarring episodes
+* Subscribing/unsubscribing podcasts
 
 # Work in progress...
 * Translation
 * Documentation
-* Starring/unstarring podcasts
 * Resuming podcasts
-* Subscribing/unsubscribing podcasts
 
 # Not working
 * Everything not available in Pocket Casts web interface (and thus pyhon-pocketcasts module)
