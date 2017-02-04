@@ -1,3 +1,0 @@
-[submodule "resources/lib/python-pocketcasts"]
-	path = resources/lib/python-pocketcasts
-	url = git@github.com:sirl1on/python-pocketcasts.git
